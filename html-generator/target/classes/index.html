@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- JavaScript Bundle with Popper -->
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./css/main.css" />
+    <title>CDN</title>
+  </head>
+  <body>
+    <header class="text-cprimary ps-md-5 ps-2">
+      <h1 class="text-md-start text-center">CDN</h1>
+      <p class="text-md-start text-center">Private content delivery network by ajaxer&trade; for personal use only.</p>
+    </header>
+
+    <main class="container-fluid p-4">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb fs-6 p-2 text-cprimary fs-5">
+          <li class="breadcrumb-item">
+            <i class="bi bi-house"></i>
+            <a href="#">Home</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Library</li>
+        </ol>
+      </nav>
+
+      <hr />
+
+      <div class="d-none">
+        <table class="table table-hover1 border-0 text-cprimary">
+          <thead>
+            <tr>
+              <th>Resource name</th>
+              <th class="col-2">Last modified</th>
+              <th class="col-1">Size</th>
+            </tr>
+          </thead>
+          <tr>
+            <td>
+              <a href="#"><i class="bi bi-arrow-left"></i> back</a>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <i class="bi bi-folder-fill fs-5"></i>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#resourceModal">Some old folder</a>
+              <!-- <button type="button" class="btn btn-primary">Launch demo modal</button> -->
+            </td>
+            <td>2022-07-21 18:09</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <i class="bi bi-folder-fill fs-5"></i>
+              <a href="#">Some old folder</a>
+            </td>
+            <td>2022-07-21 18:09</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <i class="bi bi-folder-fill fs-5"></i>
+              <a href="#">Some old folder</a>
+            </td>
+            <td>2022-07-21 18:09</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <i class="bi bi-file-earmark fs-5"></i>
+              <a href="#">jaxer-notification-bundle-v1.0.0.js</a>
+            </td>
+            <td>2022-07-21 18:09</td>
+            <td>2.06mb</td>
+          </tr>
+          <tr>
+            <td>
+              <i class="bi bi-filetype-js fs-5"></i>
+              <a href="#">jaxer-notification-bundle-v1.0.0.js</a>
+            </td>
+            <td>2022-07-21 18:09</td>
+            <td>2.06mb</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="text-center pt-5">
+        <!-- <img src="./images/folder-empty.svg" alt="" width="128" /> -->
+        <h1>404</h1>
+        <p>No resource found</p>
+      </div>
+    </main>
+
+    <footer class="bg-cprimary mt-5 border-top">
+      <div class="p-5 text-md-end text-center">
+        <div class="align-bottom text-cprimary">
+          <img src="./images/folder-empty.svg" class="mb-1" alt="logo" width="48" />
+          <p class="fs-5 m-0">ajaxer&trade;</p>
+          <p class="fs-6 m-0">v2022-07-23</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- start-of-model -->
+    <div
+      class="modal modal-lg fade"
+      id="resourceModal"
+      tabindex="-1"
+      aria-labelledby="resourceModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-cprimary">
+          <div class="modal-body">
+            <div class="p-4 pb-3">
+              <div class="row">
+                <div class="col-12">
+                  <div>
+                    <div>CDN provider &mdash;</div>
+                    <div class="form-check form-check-inline">
+                      <label class="form-check-label cursor-pointer">
+                        <input class="form-check-input" type="radio" name="cdnProvider" value="github" />
+                        Github</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <label class="form-check-label cursor-pointer">
+                        <input class="form-check-input" type="radio" name="cdnProvider" value="Cloudflare" />
+                        Cloudflare</label
+                      >
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <label class="form-check-label cursor-pointer">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="cdnProvider"
+                          value="jsdelivery"
+                          checked="checked"
+                        />
+                        jsDelivery</label
+                      >
+                    </div>
+                  </div>
+
+                  <div class="my-2">
+                    <div class="mb-2">
+                      <div>Raw url</div>
+                      <code>
+                        https://cdn.jsdelivr.net/npm/some/long/url/to/test/overflow/in/modeal/bootstrap@5.2.0/dist/css/bootstrap.min.css
+                      </code>
+                    </div>
+                    <div>
+                      <div>HTML embedded</div>
+                      <code>
+                        &lt;link rel="stylesheet"
+                        href="https://cdn.jsdelivr.net/npm/some/long/url/to/test/overflow/in/modeal/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+                        /&gt;
+                      </code>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 mt-3">
+                  <div class="row">
+                    <div class="col-sm-12 col-lg-4 mb-1">
+                      <button class="btn btn-light w-100"><i class="bi bi-clipboard2"></i> Copy raw url</button>
+                    </div>
+                    <div class="col-sm-12 col-lg-4 mb-1">
+                      <button class="btn btn-light w-100">
+                        <i class="bi bi-clipboard2-data"></i> Copy html/embedded
+                      </button>
+                    </div>
+                    <div class="col-sm-12 col-lg-4 mb-1">
+                      <button class="btn btn-light w-100"><i class="bi bi-download"></i> Download file</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end-of-model -->
+  </body>
+</html>
