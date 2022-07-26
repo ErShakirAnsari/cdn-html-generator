@@ -12,4 +12,5 @@ public class MetaDto
 {
 	private String name;
 	private String date;
+	private boolean isFolder;
 }

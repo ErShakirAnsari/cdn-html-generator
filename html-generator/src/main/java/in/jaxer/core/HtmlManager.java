@@ -119,16 +119,7 @@ public class HtmlManager
 		StringBuilder trFolders = new StringBuilder("");
 		StringBuilder trFiles = new StringBuilder("");
 
-		MetaDtoList metaDtoList = null;
-		try
-		{
-			File metaFile = new File(files[0].getParent(), appPropreties.getMetaJsonFileName());
-			metaDtoList = Files.readJsonObject(MetaDtoList.class, metaFile);
-			System.out.println(metaDtoList);
-		} catch (IOException e)
-		{
-			System.out.println("[ERROR] meta.json not found");
-		}
+		MetaDtoList metaDtoList = getMetaDtoList(files[0]);
 
 		for (File child : files)
 		{
@@ -140,7 +131,7 @@ public class HtmlManager
 						.append("<i class='bi bi-folder-fill fs-5'></i>&nbsp;")
 						.append("<a href='./" + child.getName() + "/" + appPropreties.getAppHtmlPagename() + "'>" + child.getName() + "</a>")
 						.append("</td>");
-				trFolders.append("<td>" + getResourceDate(metaDtoList, null) + "</td>");
+				trFolders.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
 				trFolders.append("<td></td>");
 				trFolders.append("</tr>");
 			} else
@@ -163,15 +154,28 @@ public class HtmlManager
 		return table.toString();
 	}
 
+	private MetaDtoList getMetaDtoList(File file)
+	{
+		try
+		{
+			File metaFile = new File(file.getParent(), appPropreties.getMetaJsonFileName());
+			return Files.readJsonObject(MetaDtoList.class, metaFile);
+		} catch (IOException e)
+		{
+			System.out.println("[ERROR] meta.json not found");
+			return null;
+		}
+	}
+
 	public String getResourceDate(MetaDtoList metaDtoList, File file)
 	{
 		String date = "---";
 		if (metaDtoList != null && JValidator.isNotNullAndNotEmpty(metaDtoList.getMetaDtoList()))
 		{
-			String resourceName = file == null ? "root" : file.getName();
 			Optional<MetaDto> optional = metaDtoList.getMetaDtoList()
 					.stream()
-					.filter(d -> d.getName().equalsIgnoreCase(resourceName))
+					.filter(d -> d.isFolder() == file.isDirectory())
+					.filter(d -> d.getName().equalsIgnoreCase(file.getName()))
 					.findFirst();
 			if (optional.isPresent())
 			{

@@ -1,5 +1,6 @@
 package in.jaxer.core;
 
+import in.jaxer.core.utilities.JValidator;
 import in.jaxer.core.utilities.Strings;
 import in.jaxer.utils.CustomFileFilter;
 import in.jaxer.utils.AppPropreties;
@@ -85,8 +86,8 @@ public class FileHandler
 
 	private void createHtmlFile(File folder)
 	{
-		File htmlfile = new File(folder, appPropreties.getAppHtmlPagename());
-		try (Writer writer = new BufferedWriter(new FileWriter(htmlfile));)
+		File htmlFile = new File(folder, appPropreties.getAppHtmlPagename());
+		try (Writer writer = new BufferedWriter(new FileWriter(htmlFile));)
 		{
 			writer.append(htmlManager.getHtmlHead(""));
 			writer.append(htmlManager.getBodyHeader());
@@ -102,10 +103,10 @@ public class FileHandler
 			writer.append(htmlManager.closeContainer());
 			writer.append(htmlManager.getFooter());
 			writer.append(htmlManager.endBody());
-			System.out.println(" --- created a file at:\t[" + htmlfile.getAbsolutePath() + "]");
+			System.out.println(" --- created a file at:\t[" + htmlFile.getAbsolutePath() + "]");
 		} catch (Exception ex)
 		{
-			ex.printStackTrace();
+			JValidator.rethrow(ex);
 		}
 	}
 
