@@ -4,7 +4,7 @@ import in.jaxer.core.utilities.JValidator;
 import in.jaxer.core.utilities.Strings;
 import in.jaxer.utils.CustomFileFilter;
 import in.jaxer.utils.AppPropreties;
-import in.jaxer.utils.IgnoreFileFilter;
+import in.jaxer.utils.IgnoreResourceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class FileHandler
 	private CustomFileFilter customFileFilter;
 
 	@Autowired
-	private IgnoreFileFilter ignoreFileFilter;
+	private IgnoreResourceFilter ignoreResourceFilter;
 
 	private String rootPath;
 
@@ -98,7 +98,7 @@ public class FileHandler
 			String remainingPath = Strings.removeStartsWith(folder.getAbsolutePath(), this.rootPath);
 
 			writer.append(htmlManager.getBreadcrum(remainingPath));
-			writer.append(htmlManager.getTable(folder.listFiles(ignoreFileFilter), remainingPath));
+			writer.append(htmlManager.getTable(folder.listFiles(ignoreResourceFilter), remainingPath));
 
 			writer.append(htmlManager.closeContainer());
 			writer.append(htmlManager.getFooter());

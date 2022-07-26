@@ -13,17 +13,20 @@ import java.io.FileFilter;
  * @since v1.0.0
  */
 @Component
-public class IgnoreFileFilter implements FileFilter
+public class IgnoreResourceFilter implements FileFilter
 {
 	@Autowired
 	private AppPropreties appPropreties;
 
+	@Autowired
+	private IgnoreFolderFilter ignoreFolderFilter;
+
 	@Override
-	public boolean accept(File pathname)
+	public boolean accept(File resource)
 	{
-		if (pathname.isFile())
+		if (resource.isFile())
 		{
-			String extension = Files.getExtensionWithDot(pathname.getName().toLowerCase());
+			String extension = Files.getExtensionWithDot(resource.getName().toLowerCase());
 			for (String ignoreFile : appPropreties.getIgnoreFiles())
 			{
 				if (extension == null || extension.equals(ignoreFile))
@@ -31,7 +34,18 @@ public class IgnoreFileFilter implements FileFilter
 					return false;
 				}
 			}
+		} else
+		{
+			if (resource.isHidden())
+			{
+				return false;
+			}
 
+			File[] childs = resource.listFiles(ignoreFolderFilter);
+			if (childs != null && childs.length > 0)
+			{
+				return false;
+			}
 		}
 		return true;
 	}
