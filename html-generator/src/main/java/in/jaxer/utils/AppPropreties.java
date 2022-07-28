@@ -34,6 +34,9 @@ public class AppPropreties
 	@Value("${app.html.pagename}")
 	private String appHtmlPagename;
 
+	@Value("${app.js.main}")
+	private String applicationJs;
+
 	@Value("${app.css.main}")
 	private String appCssMain;
 

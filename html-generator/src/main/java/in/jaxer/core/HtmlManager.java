@@ -2,7 +2,7 @@ package in.jaxer.core;
 
 import in.jaxer.core.utilities.Files;
 import in.jaxer.core.utilities.JValidator;
-import in.jaxer.core.utilities.Time;
+import in.jaxer.core.utilities.Strings;
 import in.jaxer.dto.MetaDto;
 import in.jaxer.dto.MetaDtoList;
 import in.jaxer.utils.AppPropreties;
@@ -27,15 +27,16 @@ public class HtmlManager
 	public String getHtmlHead(String title)
 	{
 		return "" +
-				"<head>\n" +
-				"<meta charset='UTF-8' />\n" +
-				"<meta http-equiv='X-UA-Compatible' content='IE=edge' />\n" +
-				"<meta name='viewport' content='width=device-width, initial-scale=1.0' />\n" +
-				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCssIcon() + "' />\n" +
-				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCss() + "'/>\n" +
-				"<script defer src='" + appPropreties.getBootstrapJs() + "'></script>\n" +
-				"<link rel='stylesheet' href='" + appPropreties.getAppCssMain() + "' />\n" +
-				"<title>" + appPropreties.getAppTitle() + " - " + title + "</title>\n" +
+				"<head>" +
+				"<meta charset='UTF-8' />" +
+				"<meta http-equiv='X-UA-Compatible' content='IE=edge' />" +
+				"<meta name='viewport' content='width=device-width, initial-scale=1.0' />" +
+				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCssIcon() + "' />" +
+				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCss() + "'/>" +
+				"<script defer src='" + appPropreties.getBootstrapJs() + "'></script>" +
+				"<link rel='stylesheet' href='" + appPropreties.getAppCssMain() + "' />" +
+				"<script defer src='" + appPropreties.getApplicationJs() + "'></script>" +
+				"<title>" + appPropreties.getAppTitle() + " - " + title + "</title>" +
 				"</head>";
 	}
 
@@ -51,44 +52,52 @@ public class HtmlManager
 
 	public String getBreadcrum(String remainingPath)
 	{
-		String navbar = "\n<nav aria-label='breadcrumb'><ol class='breadcrumb p-2 fs-6 text-cprimary fs-5'>";
+		StringBuilder navbar = new StringBuilder("");
+
+		navbar.append("\n<nav aria-label='breadcrumb'>")
+				.append("<ol class='breadcrumb p-2 fs-6 text-cprimary fs-5'>");
+
 		if (remainingPath.isEmpty())
 		{
-			navbar += "\n<li class='breadcrumb-item'><i class='bi bi-house fs-5'></i>&nbsp;Home</li>";
+			navbar.append("\n<li class='breadcrumb-item active'><i class='bi bi-house fs-5'></i>&nbsp;Home</li>");
 		} else
 		{
-			navbar += "\n<li class='breadcrumb-item'><i class='bi bi-house fs-5'></i>&nbsp;<a href='/'>Home</a></li>";
-
+			boolean homeFlag = true;
 			String[] paths = remainingPath.split(File.separator + File.separator);
 			for (int i = 0; i < paths.length; i++)
 			{
 				String path = paths[i];
-				if (path.isEmpty())
+				if (!path.isEmpty())
 				{
-					continue;
-				}
+					String relativeBackPath = "";
+					for (int j = paths.length - i - 1; j > 0; j--)
+					{
+						relativeBackPath += "../";
+					}
 
-				String relativeBackPath = "";
-				for (int j = paths.length - i - 1; j > 0; j--)
-				{
-					relativeBackPath += "../";
-				}
+					if (homeFlag)
+					{
+						navbar.append("\n<li class='breadcrumb-item'>")
+								.append("<i class='bi bi-house fs-5'></i>&nbsp;")
+								.append("<a href='../" + relativeBackPath + appPropreties.getAppHtmlPagename() + "'>Home</a>")
+								.append("</li>");
+						homeFlag = false;
+					}
 
-				if (i + 1 == paths.length)
-				{
-					navbar += "\n<li class='breadcrumb-item active' aria-current='page'>" + path + "</li>";
-				} else
-				{
-					navbar += "\n<li class='breadcrumb-item' aria-current='page'>" +
-							"<a href='" + relativeBackPath + appPropreties.getAppHtmlPagename() + "'>" + path + "</a>" +
-							"</li>";
+					if (i + 1 == paths.length)
+					{
+						navbar.append("\n<li class='breadcrumb-item active' aria-current='page'>" + path + "</li>");
+					} else
+					{
+						navbar.append("\n<li class='breadcrumb-item' aria-current='page'>")
+								.append("<a href='" + relativeBackPath + appPropreties.getAppHtmlPagename() + "'>" + path + "</a>")
+								.append("</li>");
+					}
 				}
 			}
 		}
-		navbar += "" +
-				"</ol>\n" +
-				"</nav>";
-		return navbar;
+		navbar.append("</ol></nav>");
+		return navbar.toString();
 	}
 
 	public String getTable(File[] files, String remainingPath)
@@ -136,9 +145,12 @@ public class HtmlManager
 				trFolders.append("</tr>");
 			} else
 			{
+				String uuid = Strings.getUUID();
 				trFiles.append("\n<tr>");
 				trFiles.append("<td>")
-						.append(getIcon(child.getName().toLowerCase()) + "<a href='#' data-bs-toggle='modal' data-bs-target='#resourceModal'>" + child.getName() + "</a>")
+						.append(getIcon(child.getName().toLowerCase()))
+//						.append("<a href='#' data-bs-toggle='modal' data-bs-target='#resourceModal'>" + child.getName() + "</a>")
+						.append("<a href='javascript:void(0)' onclick='onResourceClick(\"" + uuid + "\")' id='" + uuid + "'>" + child.getName() + "</a>")
 						.append("</td>");
 				trFiles.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
 				trFiles.append("<td>" + Files.getFileSize(child.length()) + "</td>");
@@ -241,6 +253,63 @@ public class HtmlManager
 		}
 
 		return defaultIcon;
+	}
+
+	public String getModelHtml()
+	{
+		StringBuilder modelHtml = new StringBuilder();
+
+		modelHtml.append("\n<div class='modal modal-lg fade' id='resourceModal' tabindex='-1' aria-labelledby='resourceModalLabel' aria-hidden='true'>")
+				.append("<div class='modal-dialog'>")
+				.append("<div class='modal-content bg-cprimary'>")
+				.append("<div class='modal-body'>")
+				.append("<div class='p-4 pb-3'>")
+				.append("<div class='row'>")
+				.append("<div class='col-12'>")
+				.append("<div>")
+				.append("<div>CDN provider &mdash;</div>")
+				.append("<div class='form-check form-check-inline'>")
+				.append("<label class='form-check-label cursor-pointer'>")
+				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='github' onchange='onChangeCdnProvide()' />")
+				.append("Github</label>")
+				.append("</div>")
+				.append("<div class='form-check form-check-inline'>")
+				.append("<label class='form-check-label cursor-pointer'>")
+				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='cloudflare' onchange='onChangeCdnProvide()' />")
+				.append("Cloudflare</label>")
+				.append("</div>")
+				.append("<div class='form-check form-check-inline'>")
+				.append("<label class='form-check-label cursor-pointer'>")
+				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='jsdelivery' onchange='onChangeCdnProvide()' checked='checked' />")
+				.append("jsDelivery</label>")
+				.append("</div>")
+				.append("</div>")
+				.append("<div class='my-2'>")
+				.append("<div class='mb-2'><div>Raw url</div><code id='idCodeRawUrl'></code></div>")
+				.append("<div class='mb-0'><div>HTML embedded</div><code id='idCodeEmbeddedUrl'></code></div>")
+				.append("</div>")
+				.append("</div>")
+				.append("<div class='col-12 mt-3'>")
+				.append("<div class='row'>")
+				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
+				.append("<button class='btn btn-light w-100' onclick='onClickCopyRawUrl()'><i class='bi bi-clipboard2'></i>&nbsp;Copy raw url</button>")
+				.append("</div>")
+				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
+				.append("<button class='btn btn-light w-100' onclick='onClickCopyEmbeddedUrl()'><i class='bi bi-clipboard2-data'></i>&nbsp;Copy html/embedded</button>")
+				.append("</div>")
+				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
+				.append("<button class='btn btn-light w-100' onclick='onClickCopyDownloadFile()'><i class='bi bi-download'></i> Download file</button>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>")
+				.append("</div>");
+
+		return modelHtml.toString();
 	}
 
 	public String getFooter()

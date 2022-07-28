@@ -102,6 +102,7 @@ public class FileHandler
 
 			writer.append(htmlManager.closeContainer());
 			writer.append(htmlManager.getFooter());
+			writer.append(htmlManager.getModelHtml());
 			writer.append(htmlManager.endBody());
 			System.out.println(" --- created a file at:\t[" + htmlFile.getAbsolutePath() + "]");
 		} catch (Exception ex)
