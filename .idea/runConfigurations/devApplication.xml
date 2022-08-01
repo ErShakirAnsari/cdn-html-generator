@@ -1,11 +1,10 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="devApplication" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="in.jaxer.Application" />
+    <option name="MAIN_CLASS_NAME" value="in.jaxer.Main" />
     <module name="html-generator" />
-    <option name="PROGRAM_PARAMETERS" value="dev" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="in.jaxer.*" />
+        <option name="PATTERN" value="in.jaxer.core.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
