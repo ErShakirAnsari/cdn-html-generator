@@ -17,7 +17,17 @@ public class ConsoleLogger
 
 	private void log(String msg)
 	{
+		log(msg, null);
+	}
+
+	private void log(String msg, Throwable throwable)
+	{
 		System.out.println(msg);
+
+		if (throwable != null)
+		{
+			throwable.printStackTrace();
+		}
 	}
 
 	private void log(ConsoleLoggerType type, String msg)
@@ -28,6 +38,11 @@ public class ConsoleLogger
 	public void ln()
 	{
 		log("");
+	}
+
+	public void border()
+	{
+		log("----- ----- ----- -----");
 	}
 
 	public void debug(String msg)
@@ -55,6 +70,14 @@ public class ConsoleLogger
 	}
 
 	public void error(String msg)
+	{
+		if (ConsoleLoggerType.warning.value >= appPropreties.getLoggerType().value)
+		{
+			log(ConsoleLoggerType.error, msg);
+		}
+	}
+
+	public void error(String msg, Throwable throwable)
 	{
 		if (ConsoleLoggerType.warning.value >= appPropreties.getLoggerType().value)
 		{

@@ -5,15 +5,14 @@ import in.jaxer.core.utilities.JValidator;
 import in.jaxer.core.utilities.Strings;
 import in.jaxer.dto.MetaDto;
 import in.jaxer.dto.MetaDtoList;
-import in.jaxer.utils.AppPropreties;
 import in.jaxer.filters.IgnoreResourceFilter;
+import in.jaxer.utils.AppPropreties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * @author Shakir
@@ -35,7 +34,7 @@ public class HtmlManager
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
 
-	public String getHtmlHead(String title)
+	public String getHtmlHead(String title, String depth)
 	{
 		return "" +
 				"<head>" +
@@ -48,6 +47,7 @@ public class HtmlManager
 				"<link rel='stylesheet' href='" + appPropreties.getAppCssMain() + "' />" +
 				"<script defer src='" + appPropreties.getApplicationJs() + "'></script>" +
 				"<title>" + appPropreties.getAppTitle() + " - " + title + "</title>" +
+				"<script>const depth = '" + depth + "';</script>" +
 				"</head>";
 	}
 
@@ -61,20 +61,20 @@ public class HtmlManager
 				"</header>";
 	}
 
-	public String getBreadcrumb(String remainingPath)
+	public String getBreadcrumb(String depth)
 	{
 		StringBuilder navbar = new StringBuilder("");
 
 		navbar.append("\n<nav aria-label='breadcrumb'>")
 				.append("<ol class='breadcrumb p-2 fs-6 text-cprimary fs-5'>");
 
-		if (remainingPath.isEmpty())
+		if (depth.isEmpty())
 		{
 			navbar.append("\n<li class='breadcrumb-item active'><i class='bi bi-house fs-5'></i>&nbsp;Home</li>");
 		} else
 		{
 			boolean homeFlag = true;
-			String[] paths = remainingPath.split(File.separator + File.separator);
+			String[] paths = depth.split("/");
 			for (int i = 0; i < paths.length; i++)
 			{
 				String path = paths[i];
@@ -111,7 +111,7 @@ public class HtmlManager
 		return navbar.toString();
 	}
 
-	public String getTable(File folder, String remainingPath, String depth)
+	public String getTable(File folder, String depth)
 	{
 		File[] files = folder.listFiles(ignoreResourceFilter);
 		if (files == null || files.length == 0)
@@ -127,21 +127,23 @@ public class HtmlManager
 				.append("<tr>")
 				.append("<th>Resource name</th>")
 //				.append("<th class='col-2'><i class='bi bi-clock'></i>&nbsp;Available since</th>")
-				.append("<th class='col-2'>Available since</th>")
-				.append("<th class='col-1'>Size</th>")
+//				.append("<th class='col-2'>Available since</th>")
+				.append("<th class='col-1 text-end'>Size</th>")
 				.append("</tr>")
 				.append("</thead>");
 
 		table.append("\n<tbody>");
-		if (!remainingPath.isEmpty())
+
+		if (!depth.isEmpty())
 		{
+			// do not show back button on home page
 			table.append("\n<tr><td><a href='../" + appPropreties.getAppPagenameIndex() + "'><i class='bi bi-arrow-left'></i> back</a></td><td></td><td></td></tr>");
 		}
 
 		StringBuilder trFolders = new StringBuilder("");
 		StringBuilder trFiles = new StringBuilder("");
 
-		MetaDtoList metaDtoList = getMetaDtoList(files[0]);
+//		MetaDtoList metaDtoList = getMetaDtoList(files[0]);
 
 		for (File child : files)
 		{
@@ -153,7 +155,7 @@ public class HtmlManager
 						.append("<i class='bi bi-folder-fill fs-5'></i>&nbsp;")
 						.append("<a href='./" + child.getName() + "/" + appPropreties.getAppPagenameIndex() + "'>" + child.getName() + "</a>")
 						.append("</td>");
-				trFolders.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
+//				trFolders.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
 				trFolders.append("<td></td>");
 				trFolders.append("</tr>");
 			} else
@@ -163,10 +165,11 @@ public class HtmlManager
 				trFiles.append("<td>")
 						.append(getIcon(child.getName().toLowerCase()))
 //						.append("<a href='#' data-bs-toggle='modal' data-bs-target='#resourceModal'>" + child.getName() + "</a>")
-						.append("<a href='javascript:void(0)' onclick=\"onResourceClick('" + depth + "/" + child.getName() + "')\" id='" + uuid + "'>" + child.getName() + "</a>")
+//						.append("<a href='javascript:void(0)' onclick=\"onResourceClick('" + child.getName() + "')\" >" + child.getName() + "</a>")
+						.append("<a href='javascript:void(0)' onclick='onResourceClick(this)' >" + child.getName() + "</a>")
 						.append("</td>");
-				trFiles.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
-				trFiles.append("<td>" + Files.getFileSize(child.length()) + "</td>");
+//				trFiles.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
+				trFiles.append("<td class='text-end'>" + Files.getFileSize(child.length()) + "</td>");
 				trFiles.append("</tr>");
 			}
 		}

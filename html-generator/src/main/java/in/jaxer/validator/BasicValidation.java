@@ -3,6 +3,7 @@ package in.jaxer.validator;
 import in.jaxer.core.ConsoleLogger;
 import in.jaxer.core.utilities.Files;
 import in.jaxer.filters.IgnoreResourceFilter;
+import in.jaxer.filters.OnlyFileFilter;
 import in.jaxer.utils.AppConstants;
 import in.jaxer.utils.AppPropreties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,32 +28,26 @@ public class BasicValidation
 	private IgnoreResourceFilter ignoreResourceFilter;
 
 	@Autowired
+	private OnlyFileFilter onlyFileFilter;
+
+	@Autowired
 	private AppPropreties appPropreties;
 
-	public void doValidation(File root)
+	public void doValidation(String root)
 	{
-		consoleLogger.ln();
-		consoleLogger.info("Active profile: [" + appPropreties.getAppProfile() + "]");
-		consoleLogger.ln();
-
-		basicValidation(root);
+		basicValidation(new File(root));
 		consoleLogger.ln();
 	}
 
 	private void basicValidation(File rootFile)
 	{
-		boolean validationFailed = false;
-		if (!rootFile.isDirectory())
+		if (!isCdnDirectory(rootFile))
 		{
-			consoleLogger.error("rootPath is not a directory [" + rootFile.getAbsolutePath() + "]");
-			validationFailed = true;
+			System.exit(0);
 		}
 
-		boolean foundInvalidResource = resourcePathWalker(rootFile);
-		if (foundInvalidResource)
-		{
-			validationFailed = true;
-		}
+		boolean validationFailed = false;
+		validationFailed = resourcePathWalker(rootFile, validationFailed);
 
 		if (validationFailed)
 		{
@@ -64,10 +59,32 @@ public class BasicValidation
 		}
 	}
 
-	private boolean resourcePathWalker(File root)
+	private boolean isCdnDirectory(File root)
 	{
+		if (!root.isDirectory())
+		{
+			consoleLogger.error("ROOT MUST BE A FOLDER [" + root.getAbsolutePath() + "]");
+			return false;
+		}
+
+		File[] files = root.listFiles(onlyFileFilter);
+
+		for (File f : files)
+		{
+			if (f.getName().equals(appPropreties.getFileCdn()))
+			{
+				return true;
+			}
+		}
+
+		consoleLogger.error("THIS IS NOT A CDN FOLDER");
+		return false;
+	}
+
+	private boolean resourcePathWalker(File root, boolean foundInvalidResource)
+	{
+		consoleLogger.debug("foundInvalidResource: [" + foundInvalidResource + "]");
 		consoleLogger.debug("resourcePathWalker: [" + root.getAbsolutePath() + "]");
-		boolean foundInvalidResource = false;
 
 		File[] childs = root.listFiles(ignoreResourceFilter);
 		if (childs != null && childs.length > 0)
@@ -77,7 +94,9 @@ public class BasicValidation
 				if (isInvalidResource(f))
 				{
 					foundInvalidResource = true;
-				} else if (f.isDirectory() && !f.isHidden() && resourcePathWalker(f))
+				}
+
+				if (f.isDirectory() && resourcePathWalker(f, foundInvalidResource))
 				{
 					foundInvalidResource = true;
 				}
@@ -88,28 +107,29 @@ public class BasicValidation
 
 	private boolean isInvalidResource(File resource)
 	{
+		boolean isInvalidResource = false;
 		if (resource.isHidden())
 		{
 			consoleLogger.error("Hidden resource found: [" + resource.getAbsolutePath() + "]");
-			return true;
+			isInvalidResource = true;
 		}
 
 		if (!resource.getName().toLowerCase().equals(resource.getName()))
 		{
 			consoleLogger.error("Uppercase not allowed in resource-name: [" + resource.getAbsolutePath() + "]");
-			return true;
+			isInvalidResource = true;
 		}
 
 		if (resource.getName().contains("@"))
 		{
 			consoleLogger.error("Special characters are not resource-name: [" + resource.getAbsolutePath() + "]");
-			return true;
+			isInvalidResource = true;
 		}
 
 		if (resource.getName().contains(" "))
 		{
 			consoleLogger.error("White-space not allowed in resource-name: [" + resource.getAbsolutePath() + "]");
-			return true;
+			isInvalidResource = true;
 		}
 
 		if (resource.isFile())
@@ -117,7 +137,7 @@ public class BasicValidation
 			if (Files.getExtensionWithoutDot(resource.getName()) == null)
 			{
 				consoleLogger.error("Without extension resource found: [" + resource.getAbsolutePath() + "]");
-				return true;
+				isInvalidResource = true;
 			}
 
 			Pattern compile = Pattern.compile(AppConstants.REGEX_VERSION);
@@ -125,7 +145,7 @@ public class BasicValidation
 			if (!matcher.find())
 			{
 				consoleLogger.error("Invalid versioned resource found: [" + resource.getAbsolutePath() + "]");
-				return true;
+				isInvalidResource = true;
 			}
 
 			if (!resource.getName().matches(AppConstants.REGEX_VERSION))
@@ -133,6 +153,6 @@ public class BasicValidation
 			}
 		}
 
-		return false;
+		return isInvalidResource;
 	}
 }

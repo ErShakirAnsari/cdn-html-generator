@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>html-generator</artifactId>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
 
     <name>html-generator</name>
 
@@ -37,7 +37,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>in.jaxer.Application</mainClass>
+                            <mainClass>in.jaxer.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -54,6 +54,8 @@
             <properties>
                 <app.profile>dev</app.profile>
                 <app.pagename.index>index-dev.html</app.pagename.index>
+                <app.file.root.path>C:\Users\Shakir\Documents\git\personal\jaxer-in\forked\cdn</app.file.root.path>
+                <!--                <app.file.root.path>.</app.file.root.path>-->
             </properties>
         </profile>
         <profile>
@@ -61,6 +63,7 @@
             <properties>
                 <app.profile>prod</app.profile>
                 <app.pagename.index>index.html</app.pagename.index>
+                <app.file.root.path>.</app.file.root.path>
             </properties>
         </profile>
     </profiles>

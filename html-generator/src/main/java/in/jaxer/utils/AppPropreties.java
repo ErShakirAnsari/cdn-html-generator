@@ -13,7 +13,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Configuration
 @PropertySource("classpath:app.properties")
-//@PropertySource(value = "classpath:root.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "file:${user.home}/html-cdn-generator.properties", ignoreResourceNotFound = true)
 @Getter
 public class AppPropreties
 {
@@ -35,8 +35,14 @@ public class AppPropreties
 	@Value("${app.ignore.resource.files}")
 	private String[] ignoreResourceFiles;
 
+	@Value("${app.file.cdn}")
+	private String fileCdn;
+
 	@Value("${app.file.meta.json}")
 	private String metaJsonFileName;
+
+	@Value("${app.file.root.path}")
+	private String rootPath;
 
 	@Value("${app.logger.type:debug}")
 	private ConsoleLogger.ConsoleLoggerType loggerType;

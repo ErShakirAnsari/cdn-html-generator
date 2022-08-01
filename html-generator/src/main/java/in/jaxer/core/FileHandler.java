@@ -8,7 +8,13 @@ import in.jaxer.utils.AppPropreties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -34,17 +40,14 @@ public class FileHandler
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
 
-	private String rootPath;
-
 	public void createHtmlFiles(String rootPath)
 	{
-		this.rootPath = rootPath;
-		pathWalker(new File(rootPath));
+		pathWalker(new File(rootPath).getAbsoluteFile());
 	}
 
 	private void pathWalker(File root)
 	{
-		String depth = Strings.removeStartsWith(root.getAbsolutePath(), this.rootPath);
+		String depth = Strings.removeStartsWith(root.getAbsolutePath(), appPropreties.getRootPath());
 		depth = depth.replaceAll("\\\\", "/");
 		consoleLogger.debug("depth: [" + depth + "]");
 
@@ -69,25 +72,23 @@ public class FileHandler
 	private void createHtmlFile(File folder, String depth)
 	{
 		File htmlFile = new File(folder, appPropreties.getAppPagenameIndex());
+		boolean exists = htmlFile.exists();
+
 		try (Writer writer = new BufferedWriter(new FileWriter(htmlFile));)
 		{
-			writer.append(htmlManager.getHtmlHead(depth));
+			writer.append(htmlManager.getHtmlHead(folder.getName(), depth));
 			writer.append(htmlManager.getBodyHeader());
 
 			writer.append(htmlManager.openContainer());
-
-			//-- \css\emoji-css\@demo
-			String remainingPath = Strings.removeStartsWith(folder.getAbsolutePath(), this.rootPath);
-
-			writer.append(htmlManager.getBreadcrumb(remainingPath));
-			writer.append(htmlManager.getTable(folder, remainingPath, depth));
-
+			writer.append(htmlManager.getBreadcrumb(depth));
+			writer.append(htmlManager.getTable(folder, depth));
 			writer.append(htmlManager.closeContainer());
+
 			writer.append(htmlManager.getFooter());
 			writer.append(htmlManager.getModelHtml());
 			writer.append(htmlManager.endBody());
 
-			consoleLogger.info("Created a file at:\t[" + htmlFile.getAbsolutePath() + "]");
+			consoleLogger.info((exists ? "Overwritten" : "Created") + " html file at: [" + htmlFile.getAbsolutePath() + "]");
 		} catch (Exception ex)
 		{
 			JValidator.rethrow(ex);
