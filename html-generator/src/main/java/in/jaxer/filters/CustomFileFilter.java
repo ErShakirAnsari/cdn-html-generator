@@ -22,11 +22,6 @@ public class CustomFileFilter implements FileFilter
 	{
 		if (root.isDirectory())
 		{
-			if (root.isHidden())
-			{
-				return false;
-			}
-
 			File[] childFiles = root.listFiles(checkIfDirectoryContainsIgnoreFileFilter);
 			if (childFiles != null && childFiles.length > 0)
 			{

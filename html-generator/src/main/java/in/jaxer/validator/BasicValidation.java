@@ -4,6 +4,7 @@ import in.jaxer.core.ConsoleLogger;
 import in.jaxer.core.utilities.Files;
 import in.jaxer.filters.IgnoreResourceFilter;
 import in.jaxer.utils.AppConstants;
+import in.jaxer.utils.AppPropreties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +26,17 @@ public class BasicValidation
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
 
+	@Autowired
+	private AppPropreties appPropreties;
+
 	public void doValidation(File root)
 	{
+		consoleLogger.ln();
+		consoleLogger.info("Active profile: [" + appPropreties.getAppProfile() + "]");
+		consoleLogger.ln();
+
 		basicValidation(root);
+		consoleLogger.ln();
 	}
 
 	private void basicValidation(File rootFile)
@@ -44,8 +53,6 @@ public class BasicValidation
 		{
 			validationFailed = true;
 		}
-
-		consoleLogger.ln();
 
 		if (validationFailed)
 		{

@@ -53,12 +53,14 @@
             </activation>
             <properties>
                 <app.profile>dev</app.profile>
+                <app.pagename.index>index-dev.html</app.pagename.index>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
                 <app.profile>prod</app.profile>
+                <app.pagename.index>index.html</app.pagename.index>
             </properties>
         </profile>
     </profiles>

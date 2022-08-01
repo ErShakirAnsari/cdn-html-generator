@@ -22,7 +22,7 @@ public class ConsoleLogger
 
 	private void log(ConsoleLoggerType type, String msg)
 	{
-		log("[" + type.name() + "] - " + msg);
+		log("[" + type.name() + "]\t- " + msg);
 	}
 
 	public void ln()

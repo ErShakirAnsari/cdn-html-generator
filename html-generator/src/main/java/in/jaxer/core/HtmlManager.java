@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * @author Shakir
@@ -22,6 +23,9 @@ import java.util.Optional;
 @Component
 public class HtmlManager
 {
+	@Autowired
+	private ConsoleLogger consoleLogger;
+
 	@Autowired
 	private AppPropreties appPropreties;
 
@@ -183,7 +187,7 @@ public class HtmlManager
 			return Files.readJsonObject(MetaDtoList.class, metaFile);
 		} catch (IOException e)
 		{
-			System.out.println("[ERROR] meta.json not found");
+//			consoleLogger.error("meta.json not found");
 			return null;
 		}
 	}

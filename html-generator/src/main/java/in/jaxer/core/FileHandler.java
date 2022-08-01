@@ -3,6 +3,7 @@ package in.jaxer.core;
 import in.jaxer.core.utilities.JValidator;
 import in.jaxer.core.utilities.Strings;
 import in.jaxer.filters.CustomFileFilter;
+import in.jaxer.filters.IgnoreResourceFilter;
 import in.jaxer.utils.AppPropreties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ import java.nio.charset.StandardCharsets;
 public class FileHandler
 {
 	@Autowired
+	private ConsoleLogger consoleLogger;
+
+	@Autowired
 	private HtmlManager htmlManager;
 
 	@Autowired
@@ -27,28 +31,27 @@ public class FileHandler
 	@Autowired
 	private CustomFileFilter customFileFilter;
 
+	@Autowired
+	private IgnoreResourceFilter ignoreResourceFilter;
+
 	private String rootPath;
 
 	public void createHtmlFiles(String rootPath)
 	{
-		System.out.println("profile: [" + appPropreties.getAppProfile() + "]");
 		this.rootPath = rootPath;
-
-//		basicValidation();
-//
-//		pathWalker(new File(rootPath));
+		pathWalker(new File(rootPath));
 	}
 
 	private void pathWalker(File root)
 	{
 		String depth = Strings.removeStartsWith(root.getAbsolutePath(), this.rootPath);
 		depth = depth.replaceAll("\\\\", "/");
-		System.out.println("depth: [" + depth + "]");
+		consoleLogger.debug("depth: [" + depth + "]");
 
-		File[] childs = root.listFiles(customFileFilter);
+		File[] childs = root.listFiles(ignoreResourceFilter);
 		if (childs == null)
 		{
-			System.out.println("No file/folder found at root: " + root.getAbsolutePath());
+			consoleLogger.warning("No file/folder found at root: " + root.getAbsolutePath());
 			return;
 		}
 
@@ -68,7 +71,7 @@ public class FileHandler
 		File htmlFile = new File(folder, appPropreties.getAppPagenameIndex());
 		try (Writer writer = new BufferedWriter(new FileWriter(htmlFile));)
 		{
-			writer.append(htmlManager.getHtmlHead(""));
+			writer.append(htmlManager.getHtmlHead(depth));
 			writer.append(htmlManager.getBodyHeader());
 
 			writer.append(htmlManager.openContainer());
@@ -83,7 +86,8 @@ public class FileHandler
 			writer.append(htmlManager.getFooter());
 			writer.append(htmlManager.getModelHtml());
 			writer.append(htmlManager.endBody());
-			System.out.println(" --- created a file at:\t[" + htmlFile.getAbsolutePath() + "]");
+
+			consoleLogger.info("Created a file at:\t[" + htmlFile.getAbsolutePath() + "]");
 		} catch (Exception ex)
 		{
 			JValidator.rethrow(ex);
