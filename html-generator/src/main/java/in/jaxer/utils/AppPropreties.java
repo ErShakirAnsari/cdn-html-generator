@@ -1,5 +1,6 @@
 package in.jaxer.utils;
 
+import in.jaxer.core.ConsoleLogger;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -16,23 +17,35 @@ import org.springframework.context.annotation.PropertySource;
 @Getter
 public class AppPropreties
 {
+	@Value("${app.profile}")
+	private String appProfile;
+
 	@Value("${app.title}")
 	private String appTitle;
 
 	@Value("${app.brand}")
 	private String appBrand;
 
-	@Value("${app.file.ignoreFolders}")
+	@Value("${app.ignore.folders}")
 	private String[] ignoreFolders;
 
-	@Value("${app.file.ignoreFiles}")
-	private String[] ignoreFiles;
+	@Value("${app.ignore.resource.folders}")
+	private String[] ignoreResourceFolders;
+
+	@Value("${app.ignore.resource.files}")
+	private String[] ignoreResourceFiles;
 
 	@Value("${app.file.meta.json}")
 	private String metaJsonFileName;
 
-	@Value("${app.html.pagename}")
-	private String appHtmlPagename;
+	@Value("${app.logger.type:debug}")
+	private ConsoleLogger.ConsoleLoggerType loggerType;
+
+	@Value("${app.pagename.index}")
+	private String appPagenameIndex;
+
+	@Value("${app.pagename.demo}")
+	private String appPagenameDemo;
 
 	@Value("${app.js.main}")
 	private String applicationJs;
@@ -42,9 +55,6 @@ public class AppPropreties
 
 	@Value("${app.image.logo}")
 	private String appImageLogo;
-
-	@Value("${app.published.date}")
-	private String appPublishedDate;
 
 	@Value("${3p.bootstrap.css}")
 	private String bootstrapCss;

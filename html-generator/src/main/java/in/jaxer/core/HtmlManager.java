@@ -6,6 +6,7 @@ import in.jaxer.core.utilities.Strings;
 import in.jaxer.dto.MetaDto;
 import in.jaxer.dto.MetaDtoList;
 import in.jaxer.utils.AppPropreties;
+import in.jaxer.filters.IgnoreResourceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,12 @@ public class HtmlManager
 {
 	@Autowired
 	private AppPropreties appPropreties;
+
+	@Autowired
+	private FileHandler fileHandler;
+
+	@Autowired
+	private IgnoreResourceFilter ignoreResourceFilter;
 
 	public String getHtmlHead(String title)
 	{
@@ -50,7 +57,7 @@ public class HtmlManager
 				"</header>";
 	}
 
-	public String getBreadcrum(String remainingPath)
+	public String getBreadcrumb(String remainingPath)
 	{
 		StringBuilder navbar = new StringBuilder("");
 
@@ -79,7 +86,7 @@ public class HtmlManager
 					{
 						navbar.append("\n<li class='breadcrumb-item'>")
 								.append("<i class='bi bi-house fs-5'></i>&nbsp;")
-								.append("<a href='../" + relativeBackPath + appPropreties.getAppHtmlPagename() + "'>Home</a>")
+								.append("<a href='../" + relativeBackPath + appPropreties.getAppPagenameIndex() + "'>Home</a>")
 								.append("</li>");
 						homeFlag = false;
 					}
@@ -90,7 +97,7 @@ public class HtmlManager
 					} else
 					{
 						navbar.append("\n<li class='breadcrumb-item' aria-current='page'>")
-								.append("<a href='" + relativeBackPath + appPropreties.getAppHtmlPagename() + "'>" + path + "</a>")
+								.append("<a href='" + relativeBackPath + appPropreties.getAppPagenameIndex() + "'>" + path + "</a>")
 								.append("</li>");
 					}
 				}
@@ -100,8 +107,9 @@ public class HtmlManager
 		return navbar.toString();
 	}
 
-	public String getTable(File[] files, String remainingPath)
+	public String getTable(File folder, String remainingPath, String depth)
 	{
+		File[] files = folder.listFiles(ignoreResourceFilter);
 		if (files == null || files.length == 0)
 		{
 			return "\n<div class='text-center pt-5'><h1>404</h1><p>No resource found</p></div>";
@@ -114,7 +122,8 @@ public class HtmlManager
 		table.append("\n<thead>")
 				.append("<tr>")
 				.append("<th>Resource name</th>")
-				.append("<th class='col-2'><i class='bi bi-clock'></i>&nbsp;Available since</th>")
+//				.append("<th class='col-2'><i class='bi bi-clock'></i>&nbsp;Available since</th>")
+				.append("<th class='col-2'>Available since</th>")
 				.append("<th class='col-1'>Size</th>")
 				.append("</tr>")
 				.append("</thead>");
@@ -122,7 +131,7 @@ public class HtmlManager
 		table.append("\n<tbody>");
 		if (!remainingPath.isEmpty())
 		{
-			table.append("\n<tr><td><a href='../" + appPropreties.getAppHtmlPagename() + "'><i class='bi bi-arrow-left'></i> back</a></td><td></td><td></td></tr>");
+			table.append("\n<tr><td><a href='../" + appPropreties.getAppPagenameIndex() + "'><i class='bi bi-arrow-left'></i> back</a></td><td></td><td></td></tr>");
 		}
 
 		StringBuilder trFolders = new StringBuilder("");
@@ -138,7 +147,7 @@ public class HtmlManager
 
 				trFolders.append("<td>")
 						.append("<i class='bi bi-folder-fill fs-5'></i>&nbsp;")
-						.append("<a href='./" + child.getName() + "/" + appPropreties.getAppHtmlPagename() + "'>" + child.getName() + "</a>")
+						.append("<a href='./" + child.getName() + "/" + appPropreties.getAppPagenameIndex() + "'>" + child.getName() + "</a>")
 						.append("</td>");
 				trFolders.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
 				trFolders.append("<td></td>");
@@ -150,7 +159,7 @@ public class HtmlManager
 				trFiles.append("<td>")
 						.append(getIcon(child.getName().toLowerCase()))
 //						.append("<a href='#' data-bs-toggle='modal' data-bs-target='#resourceModal'>" + child.getName() + "</a>")
-						.append("<a href='javascript:void(0)' onclick='onResourceClick(\"" + uuid + "\")' id='" + uuid + "'>" + child.getName() + "</a>")
+						.append("<a href='javascript:void(0)' onclick=\"onResourceClick('" + depth + "/" + child.getName() + "')\" id='" + uuid + "'>" + child.getName() + "</a>")
 						.append("</td>");
 				trFiles.append("<td>" + getResourceDate(metaDtoList, child) + "</td>");
 				trFiles.append("<td>" + Files.getFileSize(child.length()) + "</td>");
@@ -257,59 +266,7 @@ public class HtmlManager
 
 	public String getModelHtml()
 	{
-		StringBuilder modelHtml = new StringBuilder();
-
-		modelHtml.append("\n<div class='modal modal-lg fade' id='resourceModal' tabindex='-1' aria-labelledby='resourceModalLabel' aria-hidden='true'>")
-				.append("<div class='modal-dialog'>")
-				.append("<div class='modal-content bg-cprimary'>")
-				.append("<div class='modal-body'>")
-				.append("<div class='p-4 pb-3'>")
-				.append("<div class='row'>")
-				.append("<div class='col-12'>")
-				.append("<div>")
-				.append("<div>CDN provider &mdash;</div>")
-				.append("<div class='form-check form-check-inline'>")
-				.append("<label class='form-check-label cursor-pointer'>")
-				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='github' onchange='onChangeCdnProvide()' />")
-				.append("Github</label>")
-				.append("</div>")
-				.append("<div class='form-check form-check-inline'>")
-				.append("<label class='form-check-label cursor-pointer'>")
-				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='cloudflare' onchange='onChangeCdnProvide()' />")
-				.append("Cloudflare</label>")
-				.append("</div>")
-				.append("<div class='form-check form-check-inline'>")
-				.append("<label class='form-check-label cursor-pointer'>")
-				.append("<input class='form-check-input' type='radio' name='cdnProvider' value='jsdelivery' onchange='onChangeCdnProvide()' checked='checked' />")
-				.append("jsDelivery</label>")
-				.append("</div>")
-				.append("</div>")
-				.append("<div class='my-2'>")
-				.append("<div class='mb-2'><div>Raw url</div><code id='idCodeRawUrl'></code></div>")
-				.append("<div class='mb-0'><div>HTML embedded</div><code id='idCodeEmbeddedUrl'></code></div>")
-				.append("</div>")
-				.append("</div>")
-				.append("<div class='col-12 mt-3'>")
-				.append("<div class='row'>")
-				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
-				.append("<button class='btn btn-light w-100' onclick='onClickCopyRawUrl()'><i class='bi bi-clipboard2'></i>&nbsp;Copy raw url</button>")
-				.append("</div>")
-				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
-				.append("<button class='btn btn-light w-100' onclick='onClickCopyEmbeddedUrl()'><i class='bi bi-clipboard2-data'></i>&nbsp;Copy html/embedded</button>")
-				.append("</div>")
-				.append("<div class='col-sm-12 col-lg-4 mb-1'>")
-				.append("<button class='btn btn-light w-100' onclick='onClickCopyDownloadFile()'><i class='bi bi-download'></i> Download file</button>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>")
-				.append("</div>");
-
-		return modelHtml.toString();
+		return "\n" + fileHandler.fileReader("html/model.html", true);
 	}
 
 	public String getFooter()
@@ -320,7 +277,7 @@ public class HtmlManager
 				"<div class='align-bottom text-cprimary'>" +
 				"<img src='" + appPropreties.getAppImageLogo() + "' class='mb-1' alt='logo' width='48' />" +
 				"<p class='fs-5 m-0'>" + appPropreties.getAppBrand() + "&trade;</p>" +
-				"<p class='fs-6 m-0'>" + appPropreties.getAppPublishedDate() + "</p>" +
+				"<p class='fs-6 m-0' id='idPVersion'></p>" +
 				"</div>" +
 				"</div>" +
 				"</footer>";

@@ -2,16 +2,13 @@ package in.jaxer.core;
 
 import in.jaxer.core.utilities.JValidator;
 import in.jaxer.core.utilities.Strings;
-import in.jaxer.utils.CustomFileFilter;
+import in.jaxer.filters.CustomFileFilter;
 import in.jaxer.utils.AppPropreties;
-import in.jaxer.utils.IgnoreResourceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Shakir
@@ -30,42 +27,24 @@ public class FileHandler
 	@Autowired
 	private CustomFileFilter customFileFilter;
 
-	@Autowired
-	private IgnoreResourceFilter ignoreResourceFilter;
-
 	private String rootPath;
 
 	public void createHtmlFiles(String rootPath)
 	{
+		System.out.println("profile: [" + appPropreties.getAppProfile() + "]");
 		this.rootPath = rootPath;
 
-		basicValidation();
-
-		pathWalker(new File(rootPath));
-	}
-
-	private void basicValidation()
-	{
-		File rootFile = new File(rootPath);
-
-		if (!rootFile.isDirectory())
-		{
-			System.out.println("rootPath is not a directory [" + rootFile.getAbsolutePath() + "]");
-			System.out.println("Please fix these issues");
-			System.out.println("System will exit");
-			System.exit(0);
-		}
-
-		boolean foundInvalidResource = validResourcePathWalker(rootFile);
-		if (foundInvalidResource)
-		{
-			System.out.println("System will exit");
-			System.exit(0);
-		}
+//		basicValidation();
+//
+//		pathWalker(new File(rootPath));
 	}
 
 	private void pathWalker(File root)
 	{
+		String depth = Strings.removeStartsWith(root.getAbsolutePath(), this.rootPath);
+		depth = depth.replaceAll("\\\\", "/");
+		System.out.println("depth: [" + depth + "]");
+
 		File[] childs = root.listFiles(customFileFilter);
 		if (childs == null)
 		{
@@ -73,7 +52,7 @@ public class FileHandler
 			return;
 		}
 
-		createHtmlFile(root);
+		createHtmlFile(root, depth);
 
 		for (File child : childs)
 		{
@@ -84,9 +63,9 @@ public class FileHandler
 		}
 	}
 
-	private void createHtmlFile(File folder)
+	private void createHtmlFile(File folder, String depth)
 	{
-		File htmlFile = new File(folder, appPropreties.getAppHtmlPagename());
+		File htmlFile = new File(folder, appPropreties.getAppPagenameIndex());
 		try (Writer writer = new BufferedWriter(new FileWriter(htmlFile));)
 		{
 			writer.append(htmlManager.getHtmlHead(""));
@@ -97,8 +76,8 @@ public class FileHandler
 			//-- \css\emoji-css\@demo
 			String remainingPath = Strings.removeStartsWith(folder.getAbsolutePath(), this.rootPath);
 
-			writer.append(htmlManager.getBreadcrum(remainingPath));
-			writer.append(htmlManager.getTable(folder.listFiles(ignoreResourceFilter), remainingPath));
+			writer.append(htmlManager.getBreadcrumb(remainingPath));
+			writer.append(htmlManager.getTable(folder, remainingPath, depth));
 
 			writer.append(htmlManager.closeContainer());
 			writer.append(htmlManager.getFooter());
@@ -111,30 +90,24 @@ public class FileHandler
 		}
 	}
 
-	private boolean validResourcePathWalker(File root)
+	public String fileReader(String filename, boolean trim)
 	{
-		boolean foundInvalidResource = false;
-
-		File[] childs = root.listFiles();
-		if (childs != null && childs.length > 0)
+		StringBuilder builder = new StringBuilder();
+		try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+			 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+			 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);)
 		{
-			for (File f : childs)
+			String line = null;
+			while ((line = bufferedReader.readLine()) != null)
 			{
-				if (f.getName().contains(" ") || f.getName().contains("@"))
-				{
-					foundInvalidResource = true;
-					System.out.println("Invalid resource-name: [" + f.getAbsolutePath() + "]");
-				}
-
-				if (f.isDirectory() && !f.isHidden())
-				{
-					if (validResourcePathWalker(f))
-					{
-						foundInvalidResource = true;
-					}
-				}
+				builder.append(trim ? line.trim() : line);
+				builder.append(trim ? "" : System.lineSeparator());
 			}
+		} catch (Exception ex)
+		{
+			JValidator.rethrow(ex);
 		}
-		return foundInvalidResource;
+
+		return builder.toString();
 	}
 }
