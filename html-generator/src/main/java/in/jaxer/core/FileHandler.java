@@ -40,14 +40,15 @@ public class FileHandler
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
 
-	public void createHtmlFiles(String rootPath)
+	public void createHtmlFiles(File rootFile)
 	{
-		pathWalker(new File(rootPath).getAbsoluteFile());
+		String absolutePath = rootFile.getAbsolutePath();
+		pathWalker(rootFile, absolutePath);
 	}
 
-	private void pathWalker(File root)
+	private void pathWalker(File root, String canonicalPath)
 	{
-		String depth = Strings.removeStartsWith(root.getAbsolutePath(), appPropreties.getRootPath());
+		String depth = Strings.removeStartsWith(root.getAbsolutePath(), canonicalPath);
 		depth = depth.replaceAll("\\\\", "/");
 		consoleLogger.debug("depth: [" + depth + "]");
 
@@ -64,7 +65,7 @@ public class FileHandler
 		{
 			if (child.isDirectory())
 			{
-				pathWalker(child);
+				pathWalker(child, canonicalPath);
 			}
 		}
 	}

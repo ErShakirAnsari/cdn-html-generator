@@ -33,9 +33,9 @@ public class BasicValidation
 	@Autowired
 	private AppPropreties appPropreties;
 
-	public void doValidation(String root)
+	public void doValidation(File root)
 	{
-		basicValidation(new File(root));
+		basicValidation(root);
 		consoleLogger.ln();
 	}
 

@@ -15,12 +15,12 @@ public class ConsoleLogger
 	@Autowired
 	private AppPropreties appPropreties;
 
-	private void log(String msg)
+	public void log(String msg)
 	{
 		log(msg, null);
 	}
 
-	private void log(String msg, Throwable throwable)
+	public void log(String msg, Throwable throwable)
 	{
 		System.out.println(msg);
 
@@ -30,7 +30,7 @@ public class ConsoleLogger
 		}
 	}
 
-	private void log(ConsoleLoggerType type, String msg)
+	public void log(ConsoleLoggerType type, String msg)
 	{
 		log("[" + type.name() + "]\t- " + msg);
 	}

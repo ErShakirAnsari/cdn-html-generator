@@ -1,9 +1,13 @@
 package in.jaxer.core;
 
+import in.jaxer.core.utilities.ConsoleInput;
+import in.jaxer.core.utilities.JValidator;
 import in.jaxer.utils.AppPropreties;
 import in.jaxer.validator.BasicValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 
 /**
  * @author Shakir
@@ -27,13 +31,30 @@ public class Application
 
 	public void start()
 	{
-		consoleLogger.ln();
+		consoleLogger.border();
 		consoleLogger.info("Active profile: [" + appPropreties.getAppProfile() + "]");
 		consoleLogger.info("Root path: [" + appPropreties.getRootPath() + "]");
-		consoleLogger.ln();
+		consoleLogger.border();
 
-		basicValidation.doValidation(appPropreties.getRootPath());
+		try (ConsoleInput consoleInput = new ConsoleInput())
+		{
+			consoleLogger.log("Do you want to continue? (y/n)");
+			if (!"Y".equalsIgnoreCase(consoleInput.readString()))
+			{
+				System.exit(0);
+			}
 
-		fileHandler.createHtmlFiles(appPropreties.getRootPath());
+			File rootFile = new File(appPropreties.getRootPath());
+			String canonicalPath = rootFile.getCanonicalPath();
+			consoleLogger.info("canonicalPath: [" + canonicalPath + "]");
+
+			basicValidation.doValidation(rootFile.getCanonicalFile());
+
+			fileHandler.createHtmlFiles(rootFile.getCanonicalFile());
+		} catch (Exception e)
+		{
+			JValidator.rethrow(e);
+		}
+
 	}
 }
