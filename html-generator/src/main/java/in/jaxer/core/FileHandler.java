@@ -42,10 +42,6 @@ public class FileHandler
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
 
-	@Getter
-	@Setter
-	private String version;
-
 	public void createHtmlFiles(File rootFile)
 	{
 		String absolutePath = rootFile.getAbsolutePath();

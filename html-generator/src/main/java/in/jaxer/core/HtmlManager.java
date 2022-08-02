@@ -36,19 +36,25 @@ public class HtmlManager
 
 	public String getHtmlHead(String title, String depth)
 	{
-		return "" +
-				"<head>" +
-				"<meta charset='UTF-8' />" +
-				"<meta http-equiv='X-UA-Compatible' content='IE=edge' />" +
-				"<meta name='viewport' content='width=device-width, initial-scale=1.0' />" +
-				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCssIcon() + "' />" +
-				"<link rel='stylesheet' href='" + appPropreties.getBootstrapCss() + "'/>" +
-				"<script defer src='" + appPropreties.getBootstrapJs() + "'></script>" +
-				"<link rel='stylesheet' href='" + appPropreties.getAppCssMain() + "' />" +
-				"<script defer src='" + appPropreties.getApplicationJs() + "'></script>" +
-				"<title>" + appPropreties.getAppTitle() + " - " + title + "</title>" +
-				"<script>const depth = '" + depth + "';</script>" +
-				"</head>";
+		StringBuilder headBuilder = new StringBuilder();
+
+		headBuilder.append("<head>")
+				.append("<meta charset='UTF-8' />")
+				.append("<meta http-equiv='X-UA-Compatible' content='IE=edge' />")
+				.append("<meta name='viewport' content='width=device-width, initial-scale=1.0' />")
+				.append("<link rel='stylesheet' href='" + appPropreties.getBootstrapCssIcon() + "' />")
+				.append("<link rel='stylesheet' href='" + appPropreties.getBootstrapCss() + "'/>")
+				.append("<script defer src='" + appPropreties.getBootstrapJs() + "'></script>")
+				.append("<link rel='stylesheet' href='" + appPropreties.getAppCssMain() + "' />")
+				.append("<script defer src='" + appPropreties.getApplicationJs() + "'></script>")
+				.append("\n<title>" + appPropreties.getAppTitle() + " - " + title + "</title>")
+				.append("\n<script>")
+				.append("const depth = '" + depth + "';")
+				.append("const version = '" + appPropreties.getVersion() + "';")
+				.append("</script>")
+				.append("</head>");
+
+		return headBuilder.toString();
 	}
 
 	public String getBodyHeader()
@@ -284,7 +290,7 @@ public class HtmlManager
 				"<div class='align-bottom text-cprimary'>" +
 				"<img src='" + appPropreties.getAppImageLogo() + "' class='mb-1' alt='logo' width='48' />" +
 				"<p class='fs-5 m-0'>" + appPropreties.getAppBrand() + "&trade;</p>" +
-				"<p class='fs-6 m-0' id='idPVersion'></p>" +
+				"<p class='fs-6 m-0'>" + appPropreties.getVersion() + "</p>" +
 				"</div>" +
 				"</div>" +
 				"</footer>";

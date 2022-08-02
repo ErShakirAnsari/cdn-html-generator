@@ -34,6 +34,7 @@ public class Application
 		consoleLogger.border();
 		consoleLogger.info("Active profile: [" + appPropreties.getAppProfile() + "]");
 		consoleLogger.info("Root path: [" + appPropreties.getRootPath() + "]");
+		consoleLogger.info("version: [" + appPropreties.getVersion() + "]");
 		consoleLogger.border();
 
 		try (ConsoleInput consoleInput = new ConsoleInput())
@@ -43,17 +44,14 @@ public class Application
 			{
 				System.exit(0);
 			}
-
-//			consoleLogger.log("Please enter a version i.e: vYYMMDD - ");
-//			String version = consoleInput.readString();
+			consoleLogger.ln();
 
 			File rootFile = new File(appPropreties.getRootPath());
-			String canonicalPath = rootFile.getCanonicalPath();
-			consoleLogger.info("canonicalPath: [" + canonicalPath + "]");
+			consoleLogger.info("canonicalPath: [" + rootFile.getCanonicalPath() + "]");
+			consoleLogger.ln();
 
 			basicValidation.doValidation(rootFile.getCanonicalFile());
 
-//			fileHandler.setVersion(version);
 			fileHandler.createHtmlFiles(rootFile.getCanonicalFile());
 		} catch (Exception e)
 		{

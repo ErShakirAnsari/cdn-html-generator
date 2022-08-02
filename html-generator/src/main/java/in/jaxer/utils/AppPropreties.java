@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * @author Shakir
  * @date 26-07-2022
@@ -53,14 +56,14 @@ public class AppPropreties
 	@Value("${app.pagename.demo}")
 	private String appPagenameDemo;
 
-	@Value("${app.js.main}")
-	private String applicationJs;
-
-	@Value("${app.css.main}")
-	private String appCssMain;
-
-	@Value("${app.image.logo}")
-	private String appImageLogo;
+//	@Value("${app.js.main}")
+//	private String applicationJs;
+//
+//	@Value("${app.css.main}")
+//	private String appCssMain;
+//
+//	@Value("${app.image.logo}")
+//	private String appImageLogo;
 
 	@Value("${3p.bootstrap.css}")
 	private String bootstrapCss;
@@ -70,4 +73,24 @@ public class AppPropreties
 
 	@Value("${3p.bootstrap.js}")
 	private String bootstrapJs;
+
+	public String getVersion()
+	{
+		return "v" + new SimpleDateFormat("yyMMdd").format(new Date());
+	}
+
+	public String getAppCssMain()
+	{
+		return "https://cdn.jsdelivr.net/gh/jaxer-in/cdn@v" + getVersion() + "/.resources/css/main.min.css";
+	}
+
+	public String getApplicationJs()
+	{
+		return "https://cdn.jsdelivr.net/gh/jaxer-in/cdn@v" + getVersion() + "/.resources/js/script.min.js";
+	}
+
+	public String getAppImageLogo()
+	{
+		return "https://cdn.jsdelivr.net/gh/jaxer-in/cdn@" + getVersion() + "/.resources/images/logo.min.svg";
+	}
 }

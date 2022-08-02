@@ -22,6 +22,7 @@ public class ConsoleLogger
 
 	public void log(String msg, Throwable throwable)
 	{
+//		System.out.println(AnsiBackgroundColor.RED + AnsiFontColor.BLACK + msg + AnsiFontColor.RESET);
 		System.out.println(msg);
 
 		if (throwable != null)
@@ -32,7 +33,7 @@ public class ConsoleLogger
 
 	public void log(ConsoleLoggerType type, String msg)
 	{
-		log("[" + type.name() + "]\t- " + msg);
+		log(getColor(type) + "[" + type.name() + "]\t- " + msg + AnsiFontColor.RESET);
 	}
 
 	public void ln()
@@ -83,6 +84,49 @@ public class ConsoleLogger
 		{
 			log(ConsoleLoggerType.error, msg);
 		}
+	}
+
+	private String getColor(ConsoleLoggerType loggerType)
+	{
+		if (loggerType == ConsoleLoggerType.info)
+		{
+//			return AnsiFontColor.BLUE;
+		}
+		if (loggerType == ConsoleLoggerType.warning)
+		{
+			return AnsiFontColor.YELLOW;
+		}
+		if (loggerType == ConsoleLoggerType.error)
+		{
+			return AnsiFontColor.RED;
+		}
+
+		return "";
+	}
+
+	private class AnsiFontColor
+	{
+		public static final String BLACK = "\u001B[30m";
+		public static final String RED = "\u001B[31m";
+		public static final String GREEN = "\u001B[32m";
+		public static final String YELLOW = "\u001B[33m";
+		public static final String BLUE = "\u001B[34m";
+		public static final String PURPLE = "\u001B[35m";
+		public static final String CYAN = "\u001B[36m";
+		public static final String WHITE = "\u001B[37m";
+		public static final String RESET = "\u001B[0m";
+	}
+
+	private class AnsiBackgroundColor
+	{
+		public static final String BLACK = "\u001B[40m";
+		public static final String RED = "\u001B[41m";
+		public static final String GREEN = "\u001B[42m";
+		public static final String YELLOW = "\u001B[43m";
+		public static final String BLUE = "\u001B[44m";
+		public static final String PURPLE = "\u001B[45m";
+		public static final String CYAN = "\u001B[46m";
+		public static final String WHITE = "\u001B[47m";
 	}
 
 	public enum ConsoleLoggerType
