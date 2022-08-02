@@ -5,6 +5,8 @@ import in.jaxer.core.utilities.Strings;
 import in.jaxer.filters.CustomFileFilter;
 import in.jaxer.filters.IgnoreResourceFilter;
 import in.jaxer.utils.AppPropreties;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +41,10 @@ public class FileHandler
 
 	@Autowired
 	private IgnoreResourceFilter ignoreResourceFilter;
+
+	@Getter
+	@Setter
+	private String version;
 
 	public void createHtmlFiles(File rootFile)
 	{

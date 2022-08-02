@@ -12,7 +12,7 @@ import java.io.File;
 /**
  * @author Shakir
  * @date 2022-07-21
- * @since v0.0.0
+ * @since v1.0.0
  */
 @Component
 public class Application
@@ -44,12 +44,16 @@ public class Application
 				System.exit(0);
 			}
 
+//			consoleLogger.log("Please enter a version i.e: vYYMMDD - ");
+//			String version = consoleInput.readString();
+
 			File rootFile = new File(appPropreties.getRootPath());
 			String canonicalPath = rootFile.getCanonicalPath();
 			consoleLogger.info("canonicalPath: [" + canonicalPath + "]");
 
 			basicValidation.doValidation(rootFile.getCanonicalFile());
 
+//			fileHandler.setVersion(version);
 			fileHandler.createHtmlFiles(rootFile.getCanonicalFile());
 		} catch (Exception e)
 		{
