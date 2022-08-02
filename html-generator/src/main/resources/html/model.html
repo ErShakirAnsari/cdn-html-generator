@@ -1,0 +1,66 @@
+<div class='modal modal-lg fade' id='resourceModal' tabindex='-1' aria-labelledby='resourceModalLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+        <div class='modal-content bg-cprimary'>
+            <div class='modal-body'>
+                <div class='p-4 pb-3'>
+                    <div class='row'>
+                        <div class='col-12'>
+                            <div>
+                                <div>Endpoint &mdash;</div>
+                                <div class="ms-3">
+                                    <div class='form-check'>
+                                        <label class='form-check-label cursor-pointer'>
+                                            <input class='form-check-input' type='radio' name='cdnProvider' value='github' onchange='onChangeCdnProvide()'/>
+                                            Github
+                                        </label>
+                                    </div>
+                                    <!-- <div class='form-check form-check-inline'>-->
+                                    <!-- <label class='form-check-label cursor-pointer'>-->
+                                    <!-- <input class='form-check-input' type='radio' name='cdnProvider' value='cloudflare' onchange='onChangeCdnProvide()'/>-->
+                                    <!-- Cloudflare-->
+                                    <!-- </label>-->
+                                    <!-- </div>-->
+                                    <div class='form-check'>
+                                        <label class='form-check-label cursor-pointer'>
+                                            <input class='form-check-input' type='radio' name='cdnProvider' value='jsdelivr' onchange='onChangeCdnProvide()' checked='checked'/>
+                                            jsDelivr (Recommended)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='my-2'>
+                                <div class='mb-2'>
+                                    <div>Raw url</div>
+                                    <code id='idCodeRawUrl'></code>
+                                </div>
+                                <div class='mb-0'>
+                                    <div>HTML embedded</div>
+                                    <code id='idCodeEmbeddedUrl'></code>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-12 mt-3'>
+                            <div class='row'>
+                                <div class='col-sm-12 col-lg-4 mb-1'>
+                                    <button class='btn btn-light w-100' onclick='onClickCopyRawUrl()'>
+                                        <i class='bi bi-clipboard2'></i>&nbsp;Copy raw url
+                                    </button>
+                                </div>
+                                <div class='col-sm-12 col-lg-4 mb-1'>
+                                    <button class='btn btn-light w-100' onclick='onClickCopyEmbeddedUrl()'>
+                                        <i class='bi bi-clipboard2-data'></i>&nbsp;Copy html/embedded
+                                    </button>
+                                </div>
+                                <div class='col-sm-12 col-lg-4 mb-1'>
+                                    <button class='btn btn-light w-100' onclick='onClickCopyDownloadFile()'>
+                                        <i class='bi bi-download'></i>&nbsp;Download file
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
